@@ -5,12 +5,13 @@ import SongView from "../components/SongView";
 import SongRail from "../components/SongRail";
 import { useAuth } from "../context/AuthContext";
 import { useTranspose } from "../hooks/useTranspose";
+import { tagLabel } from "../tags";
 import type { Song } from "../types";
 import { useSong } from "./useSong";
 import styles from "./SongPage.module.scss";
 
 function SongHeading({ song }: { song: Song }) {
-  const { title, performer, composer, lyricist, key } = song.data;
+  const { title, performer, composer, lyricist, key, tags = [] } = song.data;
   const credits = [composer && `Music by ${composer}`, lyricist && `words by ${lyricist}`]
     .filter(Boolean)
     .join(", ");
@@ -21,6 +22,15 @@ function SongHeading({ song }: { song: Song }) {
       {performer && <p className={styles.performer}>{performer}</p>}
       {credits && <p className={styles.credits}>{credits}</p>}
       {key && <p className={styles.credits}>Written in {key}</p>}
+      {tags.length > 0 && (
+        <p className={styles.tags}>
+          {tags.map((t) => (
+            <Link key={t} to={`/?tag=${encodeURIComponent(t)}`}>
+              {tagLabel(t)}
+            </Link>
+          ))}
+        </p>
+      )}
     </div>
   );
 }

@@ -23,7 +23,13 @@ function toSong(id: string, raw: DocumentData): Song | null {
   return {
     id,
     slug: id,
-    data: { ...raw["data"], title: raw["data"]?.title || "Untitled" },
+    data: {
+      ...raw["data"],
+      title: raw["data"].title || "Untitled",
+      tags: Array.isArray(raw["data"].tags)
+        ? raw["data"].tags.filter((t: unknown): t is string => typeof t === "string")
+        : [],
+    },
     body: raw["body"] ?? "",
     userId: raw["userId"],
   };

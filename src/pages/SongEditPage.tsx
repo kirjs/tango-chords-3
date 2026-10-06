@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import HeaderBar from "../components/HeaderBar";
 import { useSongs } from "../context/SongsContext";
 import { songsService } from "../services/songs";
+import { allTags, tagLabel } from "../tags";
 import type { SongData } from "../types";
 import { useSong } from "./useSong";
 import styles from "./SongEditPage.module.scss";
@@ -20,13 +21,15 @@ const emptyData: SongData = {
   composer: "",
   lyricist: "",
   source: "",
+  tags: [],
 };
 
 // Used for both /songs/new (no id) and /songs/:id/edit.
 export default function SongEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { reload } = useSongs();
+  const { songs, reload } = useSongs();
+  const tagOptions = allTags(songs);
   const { song, error: loadError } = useSong(id);
 
   const [data, setData] = useState<SongData>(emptyData);
@@ -43,6 +46,12 @@ export default function SongEditPage() {
 
   const update = (field: keyof SongData) => (e: { target: { value: string } }) =>
     setData((d) => ({ ...d, [field]: e.target.value }));
+
+  const toggleTag = (tag: string) =>
+    setData((d) => {
+      const tags = d.tags ?? [];
+      return { ...d, tags: tags.includes(tag) ? tags.filter((t) => t !== tag) : [...tags, tag] };
+    });
 
   const save = async () => {
     if (!data.title.trim()) {
@@ -103,6 +112,20 @@ export default function SongEditPage() {
             <input type="text" value={data.lyricist} onChange={update("lyricist")} />
           </label>
         </div>
+
+        <fieldset className={styles.tags}>
+          <legend>Tags</legend>
+          {tagOptions.map((tag) => (
+            <label key={tag} className={styles.tag}>
+              <input
+                type="checkbox"
+                checked={data.tags?.includes(tag) ?? false}
+                onChange={() => toggleTag(tag)}
+              />
+              {tagLabel(tag)}
+            </label>
+          ))}
+        </fieldset>
 
         <label>
           Lyrics and chords

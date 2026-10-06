@@ -38,6 +38,22 @@
   font-size: var(--step-2);
 }
 
+.tags {
+  display: flex;
+  gap: 12px;
+  margin: 6px 0 0;
+
+  a {
+    color: var(--tinta-suave);
+    font-style: italic;
+    text-underline-offset: 3px;
+
+    &:hover {
+      color: var(--tinta);
+    }
+  }
+}
+
 .credits {
   margin: 2px 0 0;
   color: var(--tinta-suave);

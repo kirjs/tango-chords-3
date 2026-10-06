@@ -1,0 +1,42 @@
+.filter {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+}
+
+.option {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+  font-size: var(--step-2);
+  font-style: italic;
+  color: var(--tinta-suave);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--tinta);
+  }
+
+  &[aria-current="page"] {
+    color: var(--tinta);
+    border-bottom-color: var(--tinta);
+  }
+}
+
+.count {
+  font-family: var(--font-sheet);
+  font-style: normal;
+  font-size: var(--step--1);
+}
+
+@media (max-width: 640px) {
+  .filter {
+    padding: 20px 16px 0;
+    gap: 6px 20px;
+  }
+}

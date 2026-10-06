@@ -6,6 +6,8 @@ export interface SongData {
   composer?: string;
   lyricist?: string;
   source?: string;
+  /** Lowercase, e.g. ["tango"] or ["russian"]. */
+  tags?: string[];
 }
 
 export interface Song {
