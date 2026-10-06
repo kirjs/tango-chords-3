@@ -27,33 +27,21 @@
   width: 40px;
 }
 
-.indicator {
+.marker {
   position: fixed;
-  left: 10px;
-  width: 25px;
-  height: 25px;
-  background-color: rgba(200, 200, 200, 0.5);
-  border-radius: 50%;
+  width: 12px;
+  margin-left: -6px;
   z-index: 9999;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
-}
 
-.innerDot {
-  width: 11px;
-  height: 11px;
-  background-color: #999;
-  border-radius: 50%;
-}
-
-.scrollLine {
-  position: fixed;
-  left: 10px;
-  top: 60px;
-  width: 2px;
-  height: calc(100vh - 60px);
-  background-color: #ddd;
+  // The visible line; the wider box makes it easier to click.
+  &::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(11, 81, 138, 0.35);
+  }
 }

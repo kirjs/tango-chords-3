@@ -1,9 +1,13 @@
 .song {
-  margin: auto;
-  padding: 0 24px;
+  // Fills whatever height the page gives it; extra columns overflow sideways.
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0 24px 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  column-fill: auto;
+  column-gap: 24px;
   font-family: monospace;
-  display: table;
-  width: auto;
 }
 
 .chord {
@@ -15,6 +19,7 @@
   padding: 4px 24px;
   display: flex;
   white-space: nowrap;
+  break-inside: avoid;
 
   &.emptyLine {
     padding: 12px 0;
@@ -27,6 +32,7 @@
 
   &.tagLine {
     margin-top: 24px;
+    break-after: avoid;
     border-radius: 16px 16px 0 0;
     padding-top: 8px;
 

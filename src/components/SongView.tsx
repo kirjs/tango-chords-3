@@ -1,3 +1,4 @@
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 import type { LineToken } from "../chords/chords";
 import type { TransposeState } from "../hooks/useTranspose";
 import styles from "./SongView.module.scss";
@@ -7,18 +8,62 @@ type RenderedLine = LineToken & { tag?: string; sectionEnd?: boolean };
 interface Props {
   lines: RenderedLine[];
   displayChord: TransposeState["displayChord"];
+  /** The horizontally scrolling container, shared with autoscroll. */
+  scrollRef: RefObject<HTMLDivElement | null>;
 }
 
 function Chord({ chord }: { chord: string }) {
   return chord.trim() ? <span className={styles.chord}>{chord}</span> : <span>{chord}</span>;
 }
 
-export default function SongView({ lines, displayChord }: Props) {
+// Lines flow top-to-bottom into as many columns as needed; columns that don't
+// fit on screen overflow sideways, so the song only ever scrolls horizontally.
+export default function SongView({ lines, displayChord, scrollRef }: Props) {
+  const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [columnWidth, setColumnWidth] = useState<number>();
+
+  // Columns must be at least as wide as the widest line. Measured at
+  // max-content because lines otherwise stretch to the current column width.
+  useLayoutEffect(() => {
+    const measure = () => {
+      const els = lineRefs.current.filter((el): el is HTMLDivElement => el !== null);
+      els.forEach((el) => (el.style.width = "max-content"));
+      const widest = Math.max(0, ...els.map((el) => el.offsetWidth));
+      els.forEach((el) => (el.style.width = ""));
+      setColumnWidth(widest);
+    };
+    measure();
+    document.fonts?.ready.then(measure);
+  }, [lines, displayChord]);
+
+  // A vertical mouse wheel scrolls the columns sideways.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) {
+      return;
+    }
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        el.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [scrollRef]);
+
   return (
-    <div className={styles.song}>
+    <div
+      ref={scrollRef}
+      className={styles.song}
+      style={columnWidth ? { columnWidth: `${columnWidth}px` } : undefined}
+    >
       {lines.map((line, i) => (
         <div
           key={i}
+          ref={(el) => {
+            lineRefs.current[i] = el;
+          }}
           className={[
             styles.line,
             styles[line.type],

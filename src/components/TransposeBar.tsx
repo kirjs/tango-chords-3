@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import type { Notation, TransposeState } from "../hooks/useTranspose";
@@ -20,9 +21,10 @@ const ArrowDown = () => (
 interface Props {
   song: Song;
   transpose: TransposeState;
+  scrollRef: RefObject<HTMLDivElement | null>;
 }
 
-export default function TransposeBar({ song, transpose }: Props) {
+export default function TransposeBar({ song, transpose, scrollRef }: Props) {
   const { user } = useAuth();
   const { shift, key, notation, setNotation, magicKey, simpleKeys, transposeTones, transposeToKey } =
     transpose;
@@ -70,7 +72,7 @@ export default function TransposeBar({ song, transpose }: Props) {
 
       {hasKeyTools && (
         <div className={styles.panel}>
-          <AutoScroll slug={song.slug} />
+          <AutoScroll slug={song.slug} scrollRef={scrollRef} />
         </div>
       )}
 

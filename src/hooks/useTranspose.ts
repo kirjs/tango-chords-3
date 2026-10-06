@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { analyzeSong } from "../chords/analysis";
 import { addChordIndexes } from "../chords/add_chord_indexes";
 import {
@@ -51,8 +51,10 @@ export function useTranspose(song: Song) {
   const transposeToKey = (newKey: string) =>
     transposeTones(calcKeyDifference(castExists(key), newKey));
 
-  const displayChord = (regular: string, roman: string | undefined) =>
-    notation === "A" ? regular : roman || "";
+  const displayChord = useCallback(
+    (regular: string, roman: string | undefined) => (notation === "A" ? regular : roman || ""),
+    [notation],
+  );
 
   return {
     shift,

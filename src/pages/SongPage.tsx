@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import HeaderBar from "../components/HeaderBar";
 import SongView from "../components/SongView";
@@ -6,9 +6,11 @@ import TransposeBar from "../components/TransposeBar";
 import { useTranspose } from "../hooks/useTranspose";
 import type { Song } from "../types";
 import { useSong } from "./useSong";
+import styles from "./SongPage.module.scss";
 
 function LoadedSong({ song }: { song: Song }) {
   const transpose = useTranspose(song);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.title = song.data.title;
@@ -18,12 +20,18 @@ function LoadedSong({ song }: { song: Song }) {
   }, [song.data.title]);
 
   return (
-    <>
+    <div className={styles.page}>
       <HeaderBar>
-        <TransposeBar song={song} transpose={transpose} />
+        <TransposeBar song={song} transpose={transpose} scrollRef={scrollRef} />
       </HeaderBar>
-      <SongView lines={transpose.transposedSong} displayChord={transpose.displayChord} />
-    </>
+      <div className={styles.songArea}>
+        <SongView
+          lines={transpose.transposedSong}
+          displayChord={transpose.displayChord}
+          scrollRef={scrollRef}
+        />
+      </div>
+    </div>
   );
 }
 

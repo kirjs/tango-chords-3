@@ -1,17 +1,26 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import styles from "./AutoScroll.module.scss";
 
-const TOP_OFFSET = 60;
+interface Props {
+  slug: string;
+  scrollRef: RefObject<HTMLDivElement | null>;
+}
 
-// Scrolls the page over `duration` seconds. A dot travels down to mid-screen,
-// then stays there while the page scrolls underneath it.
-export default function AutoScroll({ slug }: { slug: string }) {
+interface Marker {
+  left: number;
+  top: number;
+  height: number;
+}
+
+// Scrolls the song's columns sideways over `duration` seconds. A marker travels
+// right to mid-screen, then stays there while the columns scroll underneath it.
+export default function AutoScroll({ slug, scrollRef }: Props) {
   const [duration, setDuration] = useLocalStorage(`song.${slug}.length`, 90);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [indicator, setIndicator] = useState(0);
+  const [marker, setMarker] = useState<Marker | null>(null);
 
   const frame = useRef<number | null>(null);
   const startTime = useRef<number | null>(null);
@@ -32,16 +41,14 @@ export default function AutoScroll({ slug }: { slug: string }) {
     const elapsed = timestamp - startTime.current - pausedTotal.current;
     const p = Math.min(elapsed / (durationRef.current * 1000), 1);
 
-    const windowHeight = window.innerHeight;
-    const docHeight = document.documentElement.scrollHeight;
-    const mid = (windowHeight - 110) / 2;
-    const distance = p * (mid + docHeight - windowHeight);
-
-    if (distance <= mid) {
-      setIndicator(distance);
-    } else {
-      setIndicator(mid);
-      window.scrollTo(0, distance - mid);
+    const el = scrollRef.current;
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      const mid = el.clientWidth / 2;
+      const distance = p * (mid + el.scrollWidth - el.clientWidth);
+      const x = Math.min(distance, mid);
+      el.scrollLeft = distance - x;
+      setMarker({ left: rect.left + x, top: rect.top, height: el.clientHeight });
     }
     setProgress(p);
 
@@ -55,8 +62,8 @@ export default function AutoScroll({ slug }: { slug: string }) {
 
   const reset = () => {
     setProgress(0);
-    setIndicator(0);
-    window.scrollTo(0, 0);
+    setMarker(null);
+    scrollRef.current?.scrollTo({ left: 0 });
     startTime.current = null;
     pauseStart.current = null;
     pausedTotal.current = 0;
@@ -108,16 +115,14 @@ export default function AutoScroll({ slug }: { slug: string }) {
         title="Song length, seconds"
         onChange={(e) => setDuration(Number(e.target.value) || 1)}
       />
-      {isScrolling && (
+      {isScrolling && marker && (
         <div
-          className={styles.indicator}
-          style={{ top: `${indicator + TOP_OFFSET}px` }}
+          className={styles.marker}
+          style={{ left: marker.left, top: marker.top, height: marker.height }}
           onClick={togglePause}
-        >
-          <div className={styles.innerDot} />
-        </div>
+          title={isPaused ? "Resume" : "Pause"}
+        />
       )}
-      <div className={styles.scrollLine} />
     </div>
   );
 }
