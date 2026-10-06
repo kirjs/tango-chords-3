@@ -70,6 +70,14 @@
   text-wrap: balance;
 }
 
+// View count, on the Details line (inside the toggle so it never moves).
+.views {
+  margin-left: 14px;
+  color: var(--tinta-suave);
+  font-style: italic;
+  white-space: nowrap;
+}
+
 // Performer, credits, key and tags; closed by default to keep the sheet up top.
 // Indented to line up with the title text, past the home button.
 .details {

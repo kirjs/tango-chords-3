@@ -16,4 +16,6 @@ export interface Song {
   data: SongData;
   body: string;
   userId?: string;
+  /** How many times the song has been opened. */
+  views: number;
 }

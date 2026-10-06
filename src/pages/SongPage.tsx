@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import HeaderBar from "../components/HeaderBar";
 import SongView from "../components/SongView";
@@ -6,12 +6,15 @@ import SongRail from "../components/SongRail";
 import { useAuth } from "../context/AuthContext";
 import { usePinnedChords } from "../hooks/usePinnedChords";
 import { useTranspose } from "../hooks/useTranspose";
+import { songsService } from "../services/songs";
 import { tagLabel } from "../tags";
 import type { Song } from "../types";
 import { useSong } from "./useSong";
 import styles from "./SongPage.module.scss";
 
-function SongHeading({ song }: { song: Song }) {
+const viewsLabel = (n: number) => `${n.toLocaleString()} ${n === 1 ? "view" : "views"}`;
+
+function SongHeading({ song, views }: { song: Song; views: number }) {
   const { title, performer, composer, lyricist, key, tags = [] } = song.data;
   const credits = [composer && `Music by ${composer}`, lyricist && `words by ${lyricist}`]
     .filter(Boolean)
@@ -28,9 +31,12 @@ function SongHeading({ song }: { song: Song }) {
         </Link>
         <h1 className={styles.title}>{title}</h1>
       </div>
-      {(performer || credits || key || tags.length > 0) && (
+      {performer || credits || key || tags.length > 0 ? (
         <details className={styles.details}>
-          <summary>Details</summary>
+          <summary>
+            Details
+            <span className={styles.views}>{viewsLabel(views)}</span>
+          </summary>
           {performer && <p className={styles.performer}>{performer}</p>}
           {credits && <p className={styles.credits}>{credits}</p>}
           {key && <p className={styles.credits}>Written in {key}</p>}
@@ -44,6 +50,8 @@ function SongHeading({ song }: { song: Song }) {
             </p>
           )}
         </details>
+      ) : (
+        <p className={`${styles.details} ${styles.views}`}>{viewsLabel(views)}</p>
       )}
     </div>
   );
@@ -52,6 +60,19 @@ function SongHeading({ song }: { song: Song }) {
 function LoadedSong({ song }: { song: Song }) {
   const transpose = useTranspose(song);
   const pins = usePinnedChords(transpose.shift);
+
+  // Count this visit once (StrictMode runs effects twice in development).
+  const [views, setViews] = useState(song.views);
+  const counted = useRef(false);
+  useEffect(() => {
+    if (counted.current) return;
+    counted.current = true;
+    songsService.recordView(song.id).then(
+      () => setViews((v) => v + 1),
+      // Not signed in: the security rules don't allow the write. Show the count anyway.
+      () => {},
+    );
+  }, [song.id]);
   const { user } = useAuth();
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -71,7 +92,7 @@ function LoadedSong({ song }: { song: Song }) {
           pins={pins}
           heading={
             <>
-              <SongHeading song={song} />
+              <SongHeading song={song} views={views} />
               {!song.body.trim() && (
                 <p className="status">
                   This song has no lyrics or chords yet.{" "}

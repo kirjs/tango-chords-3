@@ -4,8 +4,10 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   serverTimestamp,
   setDoc,
+  updateDoc,
   type DocumentData,
 } from "firebase/firestore";
 import { auth, db } from "./firebase";
@@ -33,6 +35,7 @@ function toSong(id: string, raw: DocumentData): Song | null {
     },
     body: raw["body"] ?? "",
     userId: raw["userId"],
+    views: typeof raw["views"] === "number" ? raw["views"] : 0,
   };
 }
 
@@ -47,6 +50,11 @@ export const songsService = {
   async getSong(id: string): Promise<Song | null> {
     const snapshot = await getDoc(doc(songsCollection, id));
     return snapshot.exists() ? toSong(snapshot.id, snapshot.data()) : null;
+  },
+
+  /** Adds one to the song's view count (a top-level field, so edits keep it). */
+  async recordView(id: string): Promise<void> {
+    await updateDoc(doc(songsCollection, id), { views: increment(1) });
   },
 
   async deleteSong(id: string): Promise<void> {
