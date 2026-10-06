@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSongs } from "../context/SongsContext";
 import type { Song } from "../types";
 import styles from "./Header.module.scss";
@@ -11,9 +11,14 @@ interface Props {
   onClose?: () => void;
 }
 
+// Shown first while the field is empty; typing hides it.
+const RANDOM = "random" as const;
+type Item = Song | typeof RANDOM;
+
 export default function SelectSong({ autoFocus = false, onClose }: Props) {
   const { songs } = useSongs();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(autoFocus);
@@ -28,6 +33,18 @@ export default function SelectSong({ autoFocus = false, onClose }: Props) {
       (s) => s.data.title.toLowerCase().includes(q) || s.data.performer?.toLowerCase().includes(q),
     );
   }, [songs, query]);
+
+  const items: Item[] = useMemo(
+    () => (query.trim() || songs.length === 0 ? filtered : [RANDOM, ...filtered]),
+    [query, songs.length, filtered],
+  );
+
+  // Any song but the one being viewed, if there's a choice.
+  const randomSong = () => {
+    const currentId = pathname.match(/^\/songs\/([^/]+)/)?.[1];
+    const pool = songs.length > 1 ? songs.filter((s) => s.id !== currentId) : songs;
+    return pool[Math.floor(Math.random() * pool.length)];
+  };
 
   useEffect(() => {
     if (autoFocus) {
@@ -46,7 +63,8 @@ export default function SelectSong({ autoFocus = false, onClose }: Props) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  const select = (song: Song | undefined) => {
+  const select = (item: Item | undefined) => {
+    const song = item === RANDOM ? randomSong() : item;
     if (!song) {
       return;
     }
@@ -56,7 +74,7 @@ export default function SelectSong({ autoFocus = false, onClose }: Props) {
   };
 
   const move = (delta: number) => {
-    const n = filtered.length;
+    const n = items.length;
     if (n) {
       setHighlighted((highlighted + delta + n) % n);
     }
@@ -71,7 +89,7 @@ export default function SelectSong({ autoFocus = false, onClose }: Props) {
       move(-1);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      select(filtered[highlighted]);
+      select(items[highlighted]);
     } else if (e.key === "Escape") {
       inputRef.current?.blur();
     }
@@ -101,21 +119,35 @@ export default function SelectSong({ autoFocus = false, onClose }: Props) {
         }}
         onKeyDown={onKeyDown}
       />
-      {isOpen && filtered.length > 0 && (
+      {isOpen && items.length > 0 && (
         <div className={styles.dropdown}>
-          {filtered.map((song, i) => (
+          {items.map((item, i) => (
             <div
-              key={song.id}
-              className={`${styles.dropdownItem} ${i === highlighted ? styles.highlighted : ""}`}
+              key={item === RANDOM ? RANDOM : item.id}
+              className={[
+                styles.dropdownItem,
+                i === highlighted && styles.highlighted,
+                item === RANDOM && styles.random,
+              ]
+                .filter(Boolean)
+                .join(" ")}
               onMouseEnter={() => setHighlighted(i)}
               // mousedown fires before the input's blur closes the list.
               onMouseDown={(e) => {
                 e.preventDefault();
-                select(song);
+                select(item);
               }}
             >
-              {song.data.title}
-              {song.data.performer && <span className={styles.performer}>{song.data.performer}</span>}
+              {item === RANDOM ? (
+                "Random song"
+              ) : (
+                <>
+                  {item.data.title}
+                  {item.data.performer && (
+                    <span className={styles.performer}>{item.data.performer}</span>
+                  )}
+                </>
+              )}
             </div>
           ))}
         </div>

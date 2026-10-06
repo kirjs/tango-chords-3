@@ -81,6 +81,12 @@
   }
 }
 
+// "Random song": set apart from the titles below it.
+.random {
+  font-style: italic;
+  border-bottom: 1px solid rgba(37, 48, 90, 0.15);
+}
+
 .performer {
   color: var(--tinta-suave);
   font-style: italic;
