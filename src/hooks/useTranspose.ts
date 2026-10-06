@@ -1,26 +1,24 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { analyzeSong } from "../chords/analysis";
-import { addChordIndexes } from "../chords/add_chord_indexes";
-import {
-  calcKeyDifference,
-  isMajorKey,
-  isMinorKey,
-  parseChords,
-  transpose,
-  transposeChord,
-  type LineToken,
-} from "../chords/chords";
-import { castExists } from "../chords/asserts";
+import { getChordIndex, parseChords, transpose, transposeChord, type LineToken } from "../chords/chords";
 import { tagLines } from "../chords/tag_lines";
 import type { Song } from "../types";
 import { useLocalStorage } from "./useLocalStorage";
 
-export type Notation = "A" | "i";
+export interface KeyOption {
+  /** Semitones up from the written key, 0–11. */
+  shift: number;
+  label: string;
+}
 
-// Same localStorage keys as the previous app, so saved transpositions carry over.
+function relativeLabel(shift: number) {
+  if (shift === 0) return "±0";
+  return shift <= 6 ? `+${shift}` : `−${12 - shift}`;
+}
+
+// Same localStorage key as the previous app, so saved transpositions carry over.
 export function useTranspose(song: Song) {
   const [shift, setShift] = useLocalStorage(`shift-${song.slug}`, 0);
-  const [notation, setNotation] = useLocalStorage<Notation>(`notation-${song.slug}`, "A");
   const songKey = song.data.key || undefined;
 
   // The parser rejects empty text; a song can be saved without a body.
@@ -29,48 +27,38 @@ export function useTranspose(song: Song) {
     [song.body],
   );
 
-  const key = songKey ? transposeChord(songKey, shift) : undefined;
-
-  const transposedSong = useMemo(() => {
-    const withIndexes = addChordIndexes(tagLines(parsedSong), songKey);
-    return transpose(withIndexes, shift) as LineToken[];
-  }, [parsedSong, songKey, shift]);
-
-  const magicKey = useMemo(() => {
-    const { bestKey } = analyzeSong(transposedSong, "Am");
-    return {
-      chordName: key ? transposeChord(key, bestKey.shift) : undefined,
-      ...bestKey,
-    };
-  }, [transposedSong, key]);
-
-  let simpleKeys: string[] = [];
-  if (key && isMajorKey(key)) {
-    simpleKeys = ["C", "G"].filter((c) => c !== magicKey.chordName);
-  } else if (key && isMinorKey(key)) {
-    simpleKeys = ["Am", "Em"].filter((c) => c !== magicKey.chordName);
-  }
-
-  const transposeTones = (n: number) => setShift((shift + n + 12) % 12);
-  const transposeToKey = (newKey: string) =>
-    transposeTones(calcKeyDifference(castExists(key), newKey));
-
-  const displayChord = useCallback(
-    (regular: string, roman: string | undefined) => (notation === "A" ? regular : roman || ""),
-    [notation],
+  const transposedSong = useMemo(
+    () => transpose(tagLines(parsedSong), shift) as LineToken[],
+    [parsedSong, shift],
   );
+
+  // Shift (from the written key) whose chords are easiest to play.
+  const easiestShift = useMemo(() => {
+    const { bestKey } = analyzeSong(parsedSong, "Am");
+    return bestKey.shift;
+  }, [parsedSong]);
+
+  // All 12 keys: by name in chromatic order from C when the song has a key,
+  // otherwise as semitone offsets from −5 to +6.
+  const keyOptions = useMemo<KeyOption[]>(() => {
+    const options = Array.from({ length: 12 }, (_, s) => ({
+      shift: s,
+      label: songKey ? transposeChord(songKey, s) : relativeLabel(s),
+    }));
+    return songKey
+      ? options.sort((a, b) => getChordIndex(a.label) - getChordIndex(b.label))
+      : options.sort((a, b) => ((a.shift + 5) % 12) - ((b.shift + 5) % 12));
+  }, [songKey]);
+
+  const current = keyOptions.find((o) => o.shift === shift) ?? keyOptions[0]!;
 
   return {
     shift,
-    key,
-    notation,
-    setNotation,
+    setShift,
+    currentLabel: current.label,
+    keyOptions,
+    easiestShift,
     transposedSong,
-    magicKey,
-    simpleKeys,
-    transposeTones,
-    transposeToKey,
-    displayChord,
   };
 }
 

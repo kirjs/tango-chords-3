@@ -4,19 +4,12 @@ import { useSongs } from "../context/SongsContext";
 import type { Song } from "../types";
 import styles from "./Header.module.scss";
 
-interface Props {
-  /** Focus on mount, e.g. when opened from a button. */
-  autoFocus?: boolean;
-  /** Called when the field loses focus or a song is chosen. */
-  onClose?: () => void;
-}
-
-export default function SelectSong({ autoFocus = false, onClose }: Props) {
+export default function SelectSong() {
   const { songs } = useSongs();
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(autoFocus);
+  const [isOpen, setIsOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(0);
 
   const filtered = useMemo(() => {
@@ -28,12 +21,6 @@ export default function SelectSong({ autoFocus = false, onClose }: Props) {
       (s) => s.data.title.toLowerCase().includes(q) || s.data.performer?.toLowerCase().includes(q),
     );
   }, [songs, query]);
-
-  useEffect(() => {
-    if (autoFocus) {
-      inputRef.current?.focus();
-    }
-  }, [autoFocus]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -95,10 +82,7 @@ export default function SelectSong({ autoFocus = false, onClose }: Props) {
           setIsOpen(true);
         }}
         onFocus={() => setIsOpen(true)}
-        onBlur={() => {
-          setIsOpen(false);
-          onClose?.();
-        }}
+        onBlur={() => setIsOpen(false)}
         onKeyDown={onKeyDown}
       />
       {isOpen && filtered.length > 0 && (

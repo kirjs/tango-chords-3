@@ -8,14 +8,12 @@ import {
   type RefObject,
 } from "react";
 import type { LineToken } from "../chords/chords";
-import type { TransposeState } from "../hooks/useTranspose";
 import styles from "./SongView.module.scss";
 
 type RenderedLine = LineToken & { tag?: string; sectionEnd?: boolean };
 
 interface Props {
   lines: RenderedLine[];
-  displayChord: TransposeState["displayChord"];
   /** The horizontally scrolling container, shared with autoscroll. */
   scrollRef: RefObject<HTMLDivElement | null>;
   /** Shown at the top of the first column (title, performer…). */
@@ -57,7 +55,6 @@ function Chord({ chord }: { chord: string }) {
 // Columns are as wide as the widest line.
 export default function SongView({
   lines,
-  displayChord,
   scrollRef,
   heading,
 }: Props) {
@@ -79,7 +76,7 @@ export default function SongView({
     };
     measure();
     document.fonts?.ready.then(measure);
-  }, [lines, displayChord]);
+  }, [lines]);
 
   // A vertical mouse wheel scrolls the columns sideways.
   useEffect(() => {
@@ -136,9 +133,7 @@ export default function SongView({
 
                 {line.type === "chordsAndLyricsLine" &&
                   line.value.map((item, j) => {
-                    const chord = item.chord
-                      ? displayChord(item.chord, item.romanNumeral)
-                      : "";
+                    const chord = item.chord ?? "";
                     return (
                       <div key={j}>
                         <div className={styles.chordOrSpacer}>

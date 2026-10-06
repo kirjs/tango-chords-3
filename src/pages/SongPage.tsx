@@ -42,7 +42,6 @@ function LoadedSong({ song }: { song: Song }) {
       <div className={styles.songArea}>
         <SongView
           lines={transpose.transposedSong}
-          displayChord={transpose.displayChord}
           scrollRef={scrollRef}
           heading={
             <>
