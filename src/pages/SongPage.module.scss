@@ -52,8 +52,54 @@
   text-wrap: balance;
 }
 
+// Performer, credits, key and tags; closed by default to keep the sheet up top.
+// Indented to line up with the title text, past the home button.
+.details {
+  margin: 4px 0 0 42px;
+
+  summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    list-style: none;
+    color: var(--tinta-suave);
+    font-style: italic;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: rotate(-45deg);
+      transition: transform 120ms ease-out;
+
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+      }
+    }
+
+    &:hover {
+      color: var(--tinta);
+    }
+  }
+
+  &[open] summary::before {
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+
+  &[open] summary {
+    margin-bottom: 4px;
+  }
+}
+
 .performer {
-  margin: 10px 0 0;
+  margin: 4px 0 0;
   font-size: var(--step-2);
 }
 

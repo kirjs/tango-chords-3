@@ -27,17 +27,22 @@ function SongHeading({ song }: { song: Song }) {
         </Link>
         <h1 className={styles.title}>{title}</h1>
       </div>
-      {performer && <p className={styles.performer}>{performer}</p>}
-      {credits && <p className={styles.credits}>{credits}</p>}
-      {key && <p className={styles.credits}>Written in {key}</p>}
-      {tags.length > 0 && (
-        <p className={styles.tags}>
-          {tags.map((t) => (
-            <Link key={t} to={`/?tag=${encodeURIComponent(t)}`}>
-              {tagLabel(t)}
-            </Link>
-          ))}
-        </p>
+      {(performer || credits || key || tags.length > 0) && (
+        <details className={styles.details}>
+          <summary>Details</summary>
+          {performer && <p className={styles.performer}>{performer}</p>}
+          {credits && <p className={styles.credits}>{credits}</p>}
+          {key && <p className={styles.credits}>Written in {key}</p>}
+          {tags.length > 0 && (
+            <p className={styles.tags}>
+              {tags.map((t) => (
+                <Link key={t} to={`/?tag=${encodeURIComponent(t)}`}>
+                  {tagLabel(t)}
+                </Link>
+              ))}
+            </p>
+          )}
+        </details>
       )}
     </div>
   );
