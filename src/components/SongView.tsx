@@ -10,6 +10,7 @@ import {
 } from "react";
 import type { LineToken } from "../chords/chords";
 import { useChordPopover } from "../hooks/useChordPopover";
+import type { PinnedChords } from "../hooks/usePinnedChords";
 import ChordPopover from "./ChordPopover";
 import styles from "./SongView.module.scss";
 
@@ -21,6 +22,7 @@ interface Props {
   scrollRef: RefObject<HTMLDivElement | null>;
   /** Shown at the top of the first column (title, performer…). */
   heading?: ReactNode;
+  pins: PinnedChords;
 }
 
 interface Section {
@@ -64,7 +66,7 @@ function Chord({ chord }: { chord: string }) {
 // Lines flow top-to-bottom into as many columns as needed; columns that don't
 // fit on screen overflow sideways, so the song only ever scrolls horizontally.
 // Columns are as wide as the widest line.
-export default function SongView({ lines, scrollRef, heading }: Props) {
+export default function SongView({ lines, scrollRef, heading, pins }: Props) {
   const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [columnWidth, setColumnWidth] = useState<number>();
   const sections = useMemo(() => groupSections(lines), [lines]);
@@ -147,6 +149,8 @@ export default function SongView({ lines, scrollRef, heading }: Props) {
           anchor={chordPopover.open.anchor}
           onPointerEnter={chordPopover.onCardEnter}
           onPointerLeave={chordPopover.onCardLeave}
+          isPinned={pins.isPinned(chordPopover.open.name)}
+          onTogglePin={(voicing) => pins.togglePin(chordPopover.open!.name, voicing)}
         />
       )}
       <div className={styles.track}>

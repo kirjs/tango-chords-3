@@ -4,6 +4,7 @@ import HeaderBar from "../components/HeaderBar";
 import SongView from "../components/SongView";
 import SongRail from "../components/SongRail";
 import { useAuth } from "../context/AuthContext";
+import { usePinnedChords } from "../hooks/usePinnedChords";
 import { useTranspose } from "../hooks/useTranspose";
 import { tagLabel } from "../tags";
 import type { Song } from "../types";
@@ -50,6 +51,7 @@ function SongHeading({ song }: { song: Song }) {
 
 function LoadedSong({ song }: { song: Song }) {
   const transpose = useTranspose(song);
+  const pins = usePinnedChords(transpose.shift);
   const { user } = useAuth();
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -61,11 +63,12 @@ function LoadedSong({ song }: { song: Song }) {
   }, [song.data.title]);
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${pins.pinned.length ? styles.withPins : ""}`}>
       <div className={styles.songArea}>
         <SongView
           lines={transpose.transposedSong}
           scrollRef={scrollRef}
+          pins={pins}
           heading={
             <>
               <SongHeading song={song} />
@@ -79,7 +82,7 @@ function LoadedSong({ song }: { song: Song }) {
           }
         />
       </div>
-      <SongRail song={song} transpose={transpose} />
+      <SongRail song={song} transpose={transpose} pins={pins} />
     </div>
   );
 }

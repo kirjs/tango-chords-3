@@ -8,6 +8,24 @@
   overflow: hidden;
 }
 
+// Room left after the last column for the floating rail (used by SongView);
+// pinned chord cards make the rail wider.
+.page {
+  --rail-space: 76px;
+
+  &.withPins {
+    --rail-space: 128px;
+  }
+
+  @media (max-width: 640px) {
+    --rail-space: 56px;
+
+    &.withPins {
+      --rail-space: 112px;
+    }
+  }
+}
+
 .songArea {
   flex: 1;
   min-width: 0;

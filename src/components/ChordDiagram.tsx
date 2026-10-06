@@ -13,7 +13,14 @@ const x = (string: number) => LEFT + string * SX;
 const y = (fret: number) => TOP + (fret - 0.5) * FY;
 
 // Classic box diagram: strings vertical (low E on the left), nut on top.
-export default function ChordDiagram({ position, label }: { position: Position; label?: string }) {
+interface Props {
+  position: Position;
+  label?: string;
+  /** Size relative to the drawing's base units. */
+  scale?: number;
+}
+
+export default function ChordDiagram({ position, label, scale = 1.25 }: Props) {
   const { frets, fingers, baseFret, barres } = position;
 
   // A barre spans the strings fretted at that fret.
@@ -25,7 +32,7 @@ export default function ChordDiagram({ position, label }: { position: Position; 
     barreSpans.some((b) => b.fret === fret && string >= b.from && string <= b.to);
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} width={W * 1.25} height={H * 1.25} role="img" aria-label={label}>
+    <svg viewBox={`0 0 ${W} ${H}`} width={W * scale} height={H * scale} role="img" aria-label={label}>
       {/* frets */}
       {Array.from({ length: FRETS + 1 }, (_, i) => (
         <line key={i} x1={x(0)} x2={x(STRINGS - 1)} y1={TOP + i * FY} y2={TOP + i * FY}

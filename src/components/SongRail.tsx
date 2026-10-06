@@ -4,17 +4,20 @@ import logo from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext";
 import type { TransposeState } from "../hooks/useTranspose";
 import type { Song } from "../types";
+import type { PinnedChords } from "../hooks/usePinnedChords";
 import KeyPicker from "./KeyPicker";
+import PinnedChordCard from "./PinnedChordCard";
 import SelectSong from "./SelectSong";
 import styles from "./SongRail.module.scss";
 
 interface Props {
   song: Song;
   transpose: TransposeState;
+  pins: PinnedChords;
 }
 
 // A few buttons on the right edge, so the sheet keeps the whole screen.
-export default function SongRail({ song, transpose }: Props) {
+export default function SongRail({ song, transpose, pins }: Props) {
   const { user } = useAuth();
   const [isSearching, setIsSearching] = useState(false);
 
@@ -64,6 +67,13 @@ export default function SongRail({ song, transpose }: Props) {
             <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
           </svg>
         </Link>
+      )}
+      {pins.pinned.length > 0 && (
+        <div className={styles.pinnedList} aria-label="Pinned chords">
+          {pins.pinned.map((chord) => (
+            <PinnedChordCard key={chord.name} chord={chord} onUnpin={() => pins.togglePin(chord.name)} />
+          ))}
+        </div>
       )}
     </nav>
   );

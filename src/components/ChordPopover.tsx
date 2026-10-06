@@ -13,9 +13,26 @@ interface Props {
   anchor: DOMRect;
   onPointerEnter: () => void;
   onPointerLeave: () => void;
+  isPinned: boolean;
+  /** Pins/unpins the chord beside the sheet, keeping the shape on show. */
+  onTogglePin: (voicing: number) => void;
 }
 
-export default function ChordPopover({ name, anchor, onPointerEnter, onPointerLeave }: Props) {
+const PinIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <path d="M12 17v5M9 3h6l-1 6 4 4v2H6v-2l4-4z" />
+  </svg>
+);
+
+export default function ChordPopover({
+  name,
+  anchor,
+  onPointerEnter,
+  onPointerLeave,
+  isPinned,
+  onTogglePin,
+}: Props) {
   const [db, setDb] = useState<ChordDb | null>(null);
   const [failed, setFailed] = useState(false);
   const [voicing, setVoicing] = useState(0);
@@ -59,6 +76,17 @@ export default function ChordPopover({ name, anchor, onPointerEnter, onPointerLe
     >
       <div className={styles.header}>
         <span className={styles.name}>{name}</span>
+        {position && (
+          <button
+            className={styles.pin}
+            onClick={() => onTogglePin(voicing)}
+            aria-pressed={isPinned}
+            aria-label={isPinned ? `Unpin ${name}` : `Pin ${name} beside the song`}
+            title={isPinned ? "Unpin" : "Pin beside the song"}
+          >
+            <PinIcon />
+          </button>
+        )}
         {positions.length > 1 && (
           <span className={styles.voicings}>
             <button onClick={() => setVoicing((voicing - 1 + positions.length) % positions.length)} aria-label="Previous shape">
