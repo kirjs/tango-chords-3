@@ -15,35 +15,16 @@
   font-weight: 600;
 }
 
-.line {
-  padding: 4px 24px;
-  display: flex;
-  white-space: nowrap;
-  break-inside: avoid;
-
-  &.emptyLine {
-    padding: 12px 0;
-  }
-
-  &.sectionEnd {
-    border-radius: 0 0 16px 16px;
-    padding-bottom: 16px;
-  }
-
-  &.tagLine {
-    margin-top: 24px;
-    break-after: avoid;
-    border-radius: 16px 16px 0 0;
-    padding-top: 8px;
-
-    .tag {
-      background: rgba(0, 0, 0, 0.1);
-      margin-top: -8px;
-      border-radius: 16px;
-      padding: 4px 24px;
-      margin-left: -24px;
-    }
-  }
+// A tagged block (verse, chorus...). It may break across columns; with
+// box-decoration-break: clone every fragment keeps its own rounded corners
+// and padding. Spacing is a bottom margin, which columns drop at a break, so
+// no column starts with an empty gap.
+.section {
+  border-radius: 16px;
+  padding: 4px 0 12px;
+  margin-bottom: 24px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 
   $tag-backgrounds: (
     "verse": rgb(255, 248, 154),
@@ -55,6 +36,31 @@
   @each $tag, $color in $tag-backgrounds {
     &.tag-#{$tag} {
       background: $color;
+    }
+  }
+}
+
+.line {
+  padding: 4px 24px;
+  display: flex;
+  white-space: nowrap;
+  break-inside: avoid;
+
+  &.emptyLine {
+    padding: 12px 0;
+  }
+
+  &.tagLine {
+    // Pull the label flush with the section's top-left corner.
+    margin-top: -4px;
+    padding-top: 0;
+    break-after: avoid;
+
+    .tag {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      padding: 4px 24px;
+      margin-left: -24px;
     }
   }
 }

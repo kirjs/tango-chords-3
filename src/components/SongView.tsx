@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
 import type { LineToken } from "../chords/chords";
 import type { TransposeState } from "../hooks/useTranspose";
 import styles from "./SongView.module.scss";
@@ -12,6 +12,23 @@ interface Props {
   scrollRef: RefObject<HTMLDivElement | null>;
 }
 
+interface Section {
+  tag?: string;
+  lines: { line: RenderedLine; index: number }[];
+}
+
+// Each [tag] line starts a new section; lines before the first tag form their own.
+function groupSections(lines: RenderedLine[]): Section[] {
+  const sections: Section[] = [];
+  lines.forEach((line, index) => {
+    if (line.type === "tagLine" || sections.length === 0) {
+      sections.push({ tag: line.tag, lines: [] });
+    }
+    sections[sections.length - 1]!.lines.push({ line, index });
+  });
+  return sections;
+}
+
 function Chord({ chord }: { chord: string }) {
   return chord.trim() ? <span className={styles.chord}>{chord}</span> : <span>{chord}</span>;
 }
@@ -21,6 +38,7 @@ function Chord({ chord }: { chord: string }) {
 export default function SongView({ lines, displayChord, scrollRef }: Props) {
   const lineRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [columnWidth, setColumnWidth] = useState<number>();
+  const sections = useMemo(() => groupSections(lines), [lines]);
 
   // Columns must be at least as wide as the widest line. Measured at
   // max-content because lines otherwise stretch to the current column width.
@@ -58,42 +76,42 @@ export default function SongView({ lines, displayChord, scrollRef }: Props) {
       className={styles.song}
       style={columnWidth ? { columnWidth: `${columnWidth}px` } : undefined}
     >
-      {lines.map((line, i) => (
-        <div
-          key={i}
-          ref={(el) => {
-            lineRefs.current[i] = el;
-          }}
-          className={[
-            styles.line,
-            styles[line.type],
-            line.tag && styles[line.tag],
-            line.sectionEnd && styles.sectionEnd,
-          ]
-            .filter(Boolean)
-            .join(" ")}
+      {sections.map((section, s) => (
+        <section
+          key={s}
+          className={[styles.section, section.tag && styles[section.tag]].filter(Boolean).join(" ")}
         >
-          {line.type === "chordsLine" &&
-            line.value.map((c, j) => c.chord && <Chord key={j} chord={c.chord} />)}
+          {section.lines.map(({ line, index }) => (
+            <div
+              key={index}
+              ref={(el) => {
+                lineRefs.current[index] = el;
+              }}
+              className={`${styles.line} ${styles[line.type]}`}
+            >
+              {line.type === "chordsLine" &&
+                line.value.map((c, j) => c.chord && <Chord key={j} chord={c.chord} />)}
 
-          {line.type === "lyricsLine" && line.value}
+              {line.type === "lyricsLine" && line.value}
 
-          {line.type === "tagLine" && <div className={styles.tag}>{line.value}</div>}
+              {line.type === "tagLine" && <div className={styles.tag}>{line.value}</div>}
 
-          {line.type === "chordsAndLyricsLine" &&
-            line.value.map((item, j) => {
-              const chord = item.chord ? displayChord(item.chord, item.romanNumeral) : "";
-              return (
-                <div key={j}>
-                  <div className={styles.chordOrSpacer}>
-                    {chord && <Chord chord={chord} />}
-                    {" ".repeat(Math.max(0, item.length - chord.length))}
-                  </div>
-                  <div className={styles.lyrics}>{item.lyrics}</div>
-                </div>
-              );
-            })}
-        </div>
+              {line.type === "chordsAndLyricsLine" &&
+                line.value.map((item, j) => {
+                  const chord = item.chord ? displayChord(item.chord, item.romanNumeral) : "";
+                  return (
+                    <div key={j}>
+                      <div className={styles.chordOrSpacer}>
+                        {chord && <Chord chord={chord} />}
+                        {" ".repeat(Math.max(0, item.length - chord.length))}
+                      </div>
+                      <div className={styles.lyrics}>{item.lyrics}</div>
+                    </div>
+                  );
+                })}
+            </div>
+          ))}
+        </section>
       ))}
     </div>
   );
