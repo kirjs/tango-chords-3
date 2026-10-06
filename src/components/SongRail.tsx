@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext";
 import type { TransposeState } from "../hooks/useTranspose";
 import type { Song } from "../types";
 import KeyPicker from "./KeyPicker";
+import SelectSong from "./SelectSong";
 import styles from "./SongRail.module.scss";
 
 interface Props {
@@ -14,12 +16,44 @@ interface Props {
 // A few buttons on the right edge, so the sheet keeps the whole screen.
 export default function SongRail({ song, transpose }: Props) {
   const { user } = useAuth();
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setIsSearching(true);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <nav className={styles.rail} aria-label="Song controls">
       <Link to="/" className={styles.logo} aria-label="All songs" title="All songs">
         <img src={logo} alt="" width={52} height={52} />
       </Link>
+
+      <div className={styles.searchWrap}>
+        <button
+          className={styles.pearl}
+          onClick={() => setIsSearching(true)}
+          aria-label="Find a song"
+          aria-expanded={isSearching}
+          title="Find a song (Ctrl K)"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35" />
+          </svg>
+        </button>
+        {isSearching && (
+          <div className={styles.searchPopover}>
+            <SelectSong autoFocus onClose={() => setIsSearching(false)} />
+          </div>
+        )}
+      </div>
 
       <KeyPicker transpose={transpose} />
 

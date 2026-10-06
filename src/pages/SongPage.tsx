@@ -18,7 +18,15 @@ function SongHeading({ song }: { song: Song }) {
 
   return (
     <div className={styles.heading}>
-      <h1 className={styles.title}>{title}</h1>
+      <div className={styles.titleRow}>
+        <Link to="/" className={styles.home} aria-label="All songs" title="All songs">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M3 10.5 12 3l9 7.5M5 9.5V21h5v-6h4v6h5V9.5" />
+          </svg>
+        </Link>
+        <h1 className={styles.title}>{title}</h1>
+      </div>
       {performer && <p className={styles.performer}>{performer}</p>}
       {credits && <p className={styles.credits}>{credits}</p>}
       {key && <p className={styles.credits}>Written in {key}</p>}

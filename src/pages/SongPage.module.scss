@@ -1,3 +1,5 @@
+@use "../styles/pearl";
+
 // Exactly one screen of song; the button rail floats over its right edge.
 .page {
   height: 100vh;
@@ -21,6 +23,20 @@
   // Width comes from the column; keep long titles from stretching it.
   max-width: 100%;
   white-space: normal;
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+// Same round pearl as the rail's buttons, sitting on the title's first line.
+.home {
+  @include pearl.pearl;
+  width: 32px;
+  height: 32px;
+  margin-top: 10px;
 }
 
 .title {
@@ -63,5 +79,9 @@
 @media (max-width: 640px) {
   .title {
     font-size: var(--step-4);
+  }
+
+  .home {
+    margin-top: 0;
   }
 }

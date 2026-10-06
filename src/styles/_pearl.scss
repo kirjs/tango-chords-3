@@ -1,0 +1,35 @@
+// Round mother-of-pearl keys, after the bandoneón's buttons.
+@mixin pearl {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(37, 48, 90, 0.25);
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f1efe9 55%, #dcd8cf 100%);
+  color: var(--tinta);
+  font-family: var(--font-sheet);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--tinta);
+  }
+
+  &:active {
+    background: radial-gradient(circle at 50% 60%, #ffffff 0%, #e6e2d9 100%);
+  }
+
+  // The key you're playing in.
+  &[aria-pressed="true"] {
+    background: var(--tinta);
+    border-color: var(--tinta);
+    color: var(--papel);
+  }
+}
