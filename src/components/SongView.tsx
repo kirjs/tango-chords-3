@@ -9,6 +9,8 @@ import {
   type RefObject,
 } from "react";
 import type { LineToken } from "../chords/chords";
+import { useChordPopover } from "../hooks/useChordPopover";
+import ChordPopover from "./ChordPopover";
 import styles from "./SongView.module.scss";
 
 type RenderedLine = LineToken & { tag?: string; sectionEnd?: boolean };
@@ -45,7 +47,9 @@ function sentenceCase(text: string) {
 
 function Chord({ chord }: { chord: string }) {
   return chord.trim() ? (
-    <span className={styles.chord}>{chord}</span>
+    <span className={styles.chord} data-chord={chord.trim()}>
+      {chord}
+    </span>
   ) : (
     <span>{chord}</span>
   );
@@ -127,8 +131,18 @@ export default function SongView({ lines, scrollRef, heading }: Props) {
     return () => el.removeEventListener("wheel", onWheel);
   }, [scrollRef]);
 
+  const chordPopover = useChordPopover(scrollRef);
+
   return (
     <div ref={scrollRef} className={styles.song}>
+      {chordPopover.open && (
+        <ChordPopover
+          name={chordPopover.open.name}
+          anchor={chordPopover.open.anchor}
+          onPointerEnter={chordPopover.onCardEnter}
+          onPointerLeave={chordPopover.onCardLeave}
+        />
+      )}
       <div className={styles.track}>
         {/* Columns keep the widest line's width and never stretch, so the next
           one peeks in at the edge. Width is set by fitWidth. */}

@@ -29,6 +29,12 @@
 .chord {
   color: var(--carmin);
   font-weight: 600;
+  cursor: pointer;
+  border-radius: 3px;
+
+  &:hover {
+    background: rgba(190, 30, 45, 0.1);
+  }
 }
 
 // A verse, chorus… It may break across columns; with box-decoration-break:
