@@ -22,9 +22,11 @@ export default function ChordPopover({ name, anchor, onPointerEnter, onPointerLe
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ left: anchor.left, top: anchor.bottom + 6 });
 
-  useEffect(() => {
+  const load = () => {
+    setFailed(false);
     loadChordDb().then(setDb, () => setFailed(true));
-  }, []);
+  };
+  useEffect(load, []);
   useEffect(() => setVoicing(0), [name]);
 
   const found = db ? lookupChord(db, name) : null;
@@ -72,7 +74,20 @@ export default function ChordPopover({ name, anchor, onPointerEnter, onPointerLe
       {position ? (
         <ChordDiagram position={position} label={describe(name, position)} />
       ) : (
-        <p className={styles.note}>{failed ? "Couldn't load chord shapes." : db ? "No diagram for this chord." : "Loading…"}</p>
+        <p className={styles.note}>
+          {failed ? (
+            <>
+              Couldn't load chord shapes.{" "}
+              <button className={styles.retry} onClick={load}>
+                Try again
+              </button>
+            </>
+          ) : db ? (
+            "No diagram for this chord."
+          ) : (
+            "Loading chord shapes…"
+          )}
+        </p>
       )}
       {found?.bass && <p className={styles.note}>Bass: {found.bass}</p>}
     </div>

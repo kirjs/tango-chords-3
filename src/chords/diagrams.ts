@@ -1,5 +1,8 @@
 // Looks up guitar fingerings for the chord names used in songs, using
-// @tombatossals/chords-db (loaded lazily: it's ~236 KB of JSON).
+// @tombatossals/chords-db. The data (~236 KB of JSON, ~26 KB gzipped) is
+// fetched as a plain file on first use; importing it as a module would make
+// Vite's dev server send it as ~2 MB of JavaScript.
+import chordDbUrl from "@tombatossals/chords-db/lib/guitar.json?url";
 
 export interface Position {
   /** Per string, low E to high e: -1 muted, 0 open, n = fret (relative to baseFret). */
@@ -28,10 +31,20 @@ export interface ChordLookup {
 }
 
 let dbPromise: Promise<ChordDb> | null = null;
-export const loadChordDb = () =>
-  (dbPromise ??= import("@tombatossals/chords-db/lib/guitar.json").then(
-    (m) => (m.default ?? m) as unknown as ChordDb,
-  ));
+
+/** Loads the chord data once; after a failure the next call tries again. */
+export function loadChordDb(): Promise<ChordDb> {
+  dbPromise ??= fetch(chordDbUrl)
+    .then((res) => {
+      if (!res.ok) throw new Error(`Chord data: HTTP ${res.status}`);
+      return res.json() as Promise<ChordDb>;
+    })
+    .catch((error) => {
+      dbPromise = null;
+      throw error;
+    });
+  return dbPromise;
+}
 
 // Song notation (H = B, sharps) → the database's key names (flats for Eb/Ab/Bb).
 const NOTE_TO_INDEX: Record<string, number> = {
