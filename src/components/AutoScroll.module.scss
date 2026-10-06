@@ -1,47 +1,84 @@
 .autoScroll {
   display: flex;
   align-items: center;
+  gap: 8px;
+}
 
-  button {
-    background: transparent;
-    border: 1px solid #ccc;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-right: 5px;
+.play {
+  width: 34px;
+  height: 34px;
+  border-radius: 17px;
+  border: none;
+  background: var(--tinta);
+  color: var(--papel);
+  font-size: 12px;
+  cursor: pointer;
 
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+  &:hover {
+    background: #1a2244;
+  }
+}
+
+.duration {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  font-style: italic;
+  color: var(--tinta-suave);
+
+  input {
+    width: 3.2em;
+    padding: 4px 6px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: var(--papel);
+    font-family: var(--font-sheet);
+    font-size: var(--step--1);
+    font-style: normal;
+    color: var(--tinta);
+
+    &:focus {
+      outline: none;
+      border-color: var(--tinta);
     }
   }
 }
 
-.speed {
-  margin: 0 10px;
-  min-width: 30px;
-  text-align: center;
-  display: inline-block;
+.progress {
+  min-width: 3ch;
+  font-family: var(--font-sheet);
+  font-size: var(--step--1);
 }
 
-.length {
-  width: 40px;
+.stop {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover {
+    color: var(--carmin);
+  }
 }
 
+// Reading position: a carmine line the columns slide under.
 .marker {
   position: fixed;
-  width: 12px;
-  margin-left: -6px;
-  z-index: 9999;
+  width: 14px;
+  margin-left: -7px;
+  z-index: 9;
   cursor: pointer;
 
-  // The visible line; the wider box makes it easier to click.
   &::after {
     content: "";
     position: absolute;
-    left: 5px;
+    left: 6px;
     top: 0;
     bottom: 0;
     width: 2px;
-    background: rgba(11, 81, 138, 0.35);
+    background: var(--carmin);
+    opacity: 0.45;
   }
 }

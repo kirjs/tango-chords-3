@@ -1,69 +1,50 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { analyzeSong, type SongKey } from "../chords/analysis";
-import { parseChords } from "../chords/chords";
 import type { Song } from "../types";
 import styles from "./SongList.module.scss";
 
-interface SongStats {
-  song: Song;
-  complexityScore: string;
-  sumScore?: number;
-  worstKey?: SongKey;
+interface LetterGroup {
+  letter: string;
+  songs: Song[];
 }
 
-function getSongStats(song: Song): SongStats {
-  try {
-    const { bestKey, worstKey } = analyzeSong(parseChords({ text: song.body }), song.data.key);
-    return {
-      song,
-      complexityScore: bestKey.score ? bestKey.score.toString().slice(0, 4) : "0",
-      sumScore: bestKey.sumScore,
-      worstKey,
-    };
-  } catch (e) {
-    // User-entered songs can contain chords the analyzer doesn't know.
-    console.warn(`Could not analyze "${song.data.title}":`, e);
-    return { song, complexityScore: "?" };
+// A songbook index: alphabetical, grouped under their initial letter.
+function groupByLetter(songs: Song[]): LetterGroup[] {
+  const groups = new Map<string, Song[]>();
+  for (const song of songs) {
+    const first = song.data.title.trim().charAt(0).toLocaleUpperCase();
+    const letter = /\p{L}/u.test(first) ? first : "#";
+    groups.set(letter, [...(groups.get(letter) ?? []), song]);
   }
+  return [...groups.entries()]
+    .map(([letter, songs]) => ({ letter, songs }))
+    .sort((a, b) => a.letter.localeCompare(b.letter));
 }
-
-// Songs without chords score 0/0.
-const num = (n: number | undefined) => (n === undefined || Number.isNaN(n) ? "" : n);
 
 export default function SongList({ songs }: { songs: Song[] }) {
-  const stats = useMemo(() => songs.map(getSongStats), [songs]);
+  const groups = useMemo(() => groupByLetter(songs), [songs]);
 
   return (
-    <div className={styles.songList}>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Performer</th>
-            <th>Complexity</th>
-            <th>Key</th>
-            <th>Score</th>
-            <th>Worst Key Score</th>
-            <th>Worst Key</th>
-          </tr>
-        </thead>
-        <tbody>
-          {stats.map(({ song, complexityScore, sumScore, worstKey }) => (
-            <tr key={song.id}>
-              <td>
-                <Link to={`/songs/${song.id}`}>{song.data.title}</Link>
-              </td>
-              <td>{song.data.performer}</td>
-              <td>{complexityScore}</td>
-              <td>{song.data.key}</td>
-              <td>{num(sumScore)}</td>
-              <td>{num(worstKey?.sumScore)}</td>
-              <td>{num(worstKey?.score)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className={styles.index}>
+      {groups.map(({ letter, songs }) => (
+        <section key={letter} className={styles.group} aria-label={letter}>
+          <h2 className={styles.letter} aria-hidden>
+            {letter}
+          </h2>
+          <ul>
+            {songs.map((song) => (
+              <li key={song.id}>
+                <Link to={`/songs/${song.id}`} className={styles.entry}>
+                  <span className={styles.title}>{song.data.title}</span>
+                  <span className={styles.leader} aria-hidden />
+                  {song.data.key && <span className={styles.key}>{song.data.key}</span>}
+                </Link>
+                {song.data.performer && <div className={styles.performer}>{song.data.performer}</div>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </div>
   );
 }

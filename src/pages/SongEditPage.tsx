@@ -68,6 +68,7 @@ export default function SongEditPage() {
     <>
       <HeaderBar />
       <div className={styles.songEdit}>
+        <h1 className={styles.heading}>{id ? "Edit song" : "New song"}</h1>
         {(error || loadError) && <div className={styles.error}>{error || loadError}</div>}
 
         <div className={styles.row}>
@@ -104,8 +105,18 @@ export default function SongEditPage() {
         </div>
 
         <label>
-          Lyrics with Chords
-          <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={20} />
+          Lyrics and chords
+          <span className={styles.hint}>
+            Write each chord line above its lyric line. Start a section with a line like [Verse] or
+            [Chorus].
+          </span>
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            rows={22}
+            spellCheck={false}
+            placeholder={"[Verse]\nAm          E7         Am\nEsquinas de barrio porteño"}
+          />
         </label>
 
         <div className={styles.buttons}>
@@ -113,7 +124,7 @@ export default function SongEditPage() {
             Cancel
           </button>
           <button className={styles.primary} onClick={save} disabled={isSaving || !data.title.trim()}>
-            {isSaving ? "Saving..." : "Save"}
+            {isSaving ? "Saving…" : "Save song"}
           </button>
         </div>
       </div>

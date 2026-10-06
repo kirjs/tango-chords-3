@@ -101,20 +101,34 @@ export default function AutoScroll({ slug, scrollRef }: Props) {
   useEffect(() => cancel, []);
 
   return (
-    <div className={styles.autoScroll}>
-      <button onClick={toggleScroll}>{isScrolling ? "Stop" : "Start"}</button>
-      <button onClick={togglePause} disabled={!isScrolling}>
-        {isPaused ? "Resume" : "Pause"}
+    <div className={styles.autoScroll} role="group" aria-label="Auto-scroll">
+      <button
+        className={styles.play}
+        onClick={isScrolling ? togglePause : toggleScroll}
+        aria-label={!isScrolling ? "Start auto-scroll" : isPaused ? "Resume" : "Pause"}
+        title={!isScrolling ? "Scroll through the song" : isPaused ? "Resume" : "Pause"}
+      >
+        {isScrolling && !isPaused ? "❚❚" : "▶"}
       </button>
-      <span className={styles.speed}>{Math.round(progress * 100)}%</span>
-      <input
-        type="number"
-        className={styles.length}
-        value={duration}
-        min={1}
-        title="Song length, seconds"
-        onChange={(e) => setDuration(Number(e.target.value) || 1)}
-      />
+      {isScrolling ? (
+        <>
+          <span className={styles.progress}>{Math.round(progress * 100)}%</span>
+          <button className={styles.stop} onClick={toggleScroll}>
+            Stop
+          </button>
+        </>
+      ) : (
+        <label className={styles.duration}>
+          <input
+            type="number"
+            value={duration}
+            min={1}
+            aria-label="Song length in seconds"
+            onChange={(e) => setDuration(Number(e.target.value) || 1)}
+          />
+          s
+        </label>
+      )}
       {isScrolling && marker && (
         <div
           className={styles.marker}

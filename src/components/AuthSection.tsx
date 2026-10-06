@@ -9,22 +9,25 @@ export default function AuthSection({ showNewSong = true }: { showNewSong?: bool
     <div className={styles.auth}>
       {user && showNewSong && (
         <Link to="/songs/new" className={styles.newSong}>
-          Add New Song
+          New song
         </Link>
       )}
       {error && <span className={styles.authError}>{error}</span>}
       {isLoading ? (
-        <span>Loading...</span>
+        <span className={styles.email}>Signing in…</span>
       ) : user ? (
         <>
-          <span className={styles.email}>{user.email}</span>
-          <button onClick={logout} className={styles.logout}>
-            Logout
+          <span className={styles.email} title={user.email ?? undefined}>
+            {user.displayName?.split(" ")[0] || user.email}
+          </span>
+          <button onClick={logout} className={styles.textButton}>
+            Sign out
           </button>
         </>
       ) : (
-        <button onClick={login} className={styles.login}>
-          Login with Google
+        <button onClick={login} className={styles.textButton}>
+          <span className={styles.long}>Sign in with Google</span>
+          <span className={styles.short}>Sign in</span>
         </button>
       )}
     </div>

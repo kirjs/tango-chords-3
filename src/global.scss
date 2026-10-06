@@ -1,14 +1,72 @@
+
+// A hand-copied songbook: blue-ink lyrics, chords marked in red, sections
+// labelled with fileteado porteño ribbons.
+:root {
+  --papel: #f5f5f1;
+  --papel-hondo: #eaeae4; // recessed surfaces: header, inputs
+  --tinta: #25305a; // blue ink, all text
+  --tinta-suave: #5d6488; // secondary text
+  --carmin: #be1e2d; // chords; elsewhere only for focus and errors
+  --oro: #d99a0b;
+  --verde: #2e7a4e;
+  --celeste: #3c7dc0;
+  --humo: #8c8a84;
+
+  --font-text: "Old Standard TT", "Times New Roman", serif;
+  --font-sheet: "IBM Plex Mono", ui-monospace, monospace;
+
+  // Traditional scale (Bringhurst): 14 16 18 21 24 36 48 60
+  --step--1: 0.875rem;
+  --step-0: 1rem;
+  --step-1: 1.125rem;
+  --step-2: 1.3125rem;
+  --step-3: 1.5rem;
+  --step-4: 2.25rem;
+  --step-5: 3rem;
+  --step-6: 3.75rem;
+
+  color-scheme: light;
+}
+
 html,
 body {
-  font-family: system-ui, -apple-system, sans-serif;
   margin: 0;
   padding: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--font-text);
+  font-size: var(--step-0);
+  line-height: 1.4;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--carmin);
+  outline-offset: 2px;
 }
 
 .status {
   padding: 24px;
+  font-size: var(--step-1);
+  font-style: italic;
 
   &.error {
-    color: #dc3545;
+    color: var(--carmin);
+    font-style: normal;
+  }
+
+  a {
+    text-underline-offset: 3px;
   }
 }

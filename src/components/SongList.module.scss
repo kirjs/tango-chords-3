@@ -1,36 +1,75 @@
-.songList {
-  margin: 20px;
-  overflow-x: auto;
+.index {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 32px 64px;
+  columns: 300px;
+  column-gap: 56px;
+}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
+.group {
+  break-inside: avoid;
+  margin-bottom: 28px;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
-  th,
-  td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #e2e8f0;
+  li {
+    margin-bottom: 8px;
   }
+}
 
-  th {
-    background-color: #f8fafc;
-    font-weight: 600;
-    color: #475569;
+.letter {
+  margin: 0 0 6px;
+  font-weight: 400;
+  font-style: italic;
+  font-size: var(--step-4);
+  line-height: 1;
+}
+
+// title ........ key
+.entry {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  text-decoration: none;
+  font-size: var(--step-1);
+
+  &:hover .title {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
   }
+}
 
-  tr:hover {
-    background-color: #f1f5f9;
-  }
+.title {
+  min-width: 0;
+}
 
-  a {
-    color: #0b518a;
-    text-decoration: none;
-    font-weight: 500;
+.leader {
+  flex: 1;
+  min-width: 16px;
+  border-bottom: 2px dotted rgba(37, 48, 90, 0.3);
+  transform: translateY(-4px);
+}
 
-    &:hover {
-      text-decoration: underline;
-    }
+.key {
+  font-family: var(--font-sheet);
+  font-weight: 600;
+  font-size: var(--step--1);
+  color: var(--carmin);
+}
+
+.performer {
+  color: var(--tinta-suave);
+  font-style: italic;
+  font-size: var(--step--1);
+}
+
+@media (max-width: 640px) {
+  .index {
+    padding: 20px 16px 48px;
   }
 }

@@ -2,70 +2,112 @@
   // Fills whatever height the page gives it; extra columns overflow sideways.
   height: 100%;
   box-sizing: border-box;
-  padding: 0 24px 16px;
+  padding: 20px 24px 16px;
   overflow-x: auto;
   overflow-y: hidden;
+  font-family: var(--font-sheet);
+  font-size: var(--step-0);
+  line-height: 1.3;
+}
+
+.columns {
+  height: 100%;
   column-fill: auto;
-  column-gap: 24px;
-  font-family: monospace;
+  column-gap: 28px;
 }
 
 .chord {
-  color: #0b518a;
+  color: var(--carmin);
   font-weight: 600;
 }
 
-// A tagged block (verse, chorus...). It may break across columns; with
-// box-decoration-break: clone every fragment keeps its own rounded corners
-// and padding. Spacing is a bottom margin, which columns drop at a break, so
-// no column starts with an empty gap.
+// A verse, chorus… It may break across columns; with box-decoration-break:
+// clone every fragment keeps its own rounded corners and padding. Spacing is a
+// bottom margin, which columns drop at a break, so no column starts with a gap.
 .section {
-  border-radius: 16px;
-  padding: 4px 0 12px;
-  margin-bottom: 24px;
+  --ink: var(--oro);
+  --wash: #fbf0cd;
+
+  border-radius: 14px;
+  padding: 6px 0 12px;
+  margin-bottom: 20px;
+  background: var(--wash);
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 
-  $tag-backgrounds: (
-    "verse": rgb(255, 248, 154),
-    "chorus": rgb(215, 255, 155),
-    "bridge": rgb(255, 232, 232),
-    "intro": rgb(240, 240, 240),
-  );
+  &.tag-chorus {
+    --ink: var(--verde);
+    --wash: #dcede1;
+  }
 
-  @each $tag, $color in $tag-backgrounds {
-    &.tag-#{$tag} {
-      background: $color;
-    }
+  &.tag-bridge {
+    --ink: var(--celeste);
+    --wash: #dde9f6;
+  }
+
+  &.tag-intro,
+  &.tag-outro {
+    --ink: var(--humo);
+    --wash: #e9e8e3;
   }
 }
 
 .line {
-  padding: 4px 24px;
+  padding: 3px 22px;
   display: flex;
   white-space: nowrap;
   break-inside: avoid;
 
   &.emptyLine {
-    padding: 12px 0;
+    padding: 8px 0;
   }
 
   &.tagLine {
-    // Pull the label flush with the section's top-left corner.
-    margin-top: -4px;
-    padding-top: 0;
+    margin-top: -6px;
+    padding: 0 0 6px;
     break-after: avoid;
+  }
+}
 
-    .tag {
-      background: rgba(0, 0, 0, 0.1);
-      border-radius: 16px;
-      padding: 4px 24px;
-      margin-left: -24px;
-    }
+// Fileteado ribbon: a painted banner with a forked tail, flush with the
+// section's top-left corner.
+.ribbon {
+  position: relative;
+  padding: 3px 26px 4px 22px;
+  border-radius: 14px 0 0 0;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-text);
+  font-style: italic;
+  font-size: var(--step-1);
+  line-height: 1.2;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 50%, 100% 100%, 0 100%);
+
+  .tag-verse > .tagLine > & {
+    color: var(--tinta);
   }
 }
 
 .lyrics,
 .chordOrSpacer {
   white-space: pre;
+}
+
+@media (max-width: 640px) {
+  .song {
+    padding: 14px 10px 12px;
+    font-size: 0.9375rem;
+  }
+
+  .columns {
+    column-gap: 16px;
+  }
+
+  .line {
+    padding: 3px 14px;
+  }
+
+  .ribbon {
+    padding-left: 14px;
+  }
 }

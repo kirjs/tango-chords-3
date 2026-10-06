@@ -12,3 +12,41 @@
   min-height: 0;
   position: relative;
 }
+
+// Opens the first column, like the cover of a printed partitura.
+.heading {
+  break-inside: avoid;
+  margin: 0 0 22px;
+  padding: 0 4px;
+  font-family: var(--font-text);
+  // Width comes from the column; keep long titles from stretching it.
+  max-width: 100%;
+  white-space: normal;
+}
+
+.title {
+  margin: 0;
+  font-weight: 400;
+  font-style: italic;
+  font-size: var(--step-5);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.performer {
+  margin: 10px 0 0;
+  font-size: var(--step-2);
+}
+
+.credits {
+  margin: 2px 0 0;
+  color: var(--tinta-suave);
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: var(--step-4);
+  }
+}

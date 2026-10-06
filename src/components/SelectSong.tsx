@@ -66,11 +66,15 @@ export default function SelectSong() {
 
   return (
     <div className={styles.search}>
+      <kbd className={styles.shortcut} aria-hidden>
+        {navigator.platform.includes("Mac") ? "⌘K" : "Ctrl K"}
+      </kbd>
       <input
         ref={inputRef}
         type="text"
         value={query}
-        placeholder="🎶 Find a song (CMD + K)"
+        placeholder="Find a song"
+        aria-label="Find a song"
         className={styles.searchInput}
         onChange={(e) => {
           setQuery(e.target.value);
@@ -87,6 +91,7 @@ export default function SelectSong() {
             <div
               key={song.id}
               className={`${styles.dropdownItem} ${i === highlighted ? styles.highlighted : ""}`}
+              onMouseEnter={() => setHighlighted(i)}
               // mousedown fires before the input's blur closes the list.
               onMouseDown={(e) => {
                 e.preventDefault();

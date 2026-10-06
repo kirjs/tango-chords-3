@@ -1,42 +1,89 @@
 .controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  gap: 8px 20px;
 }
 
-.panel {
-  padding: 4px;
+.group {
   display: flex;
   align-items: center;
-  border-radius: 8px;
-  background: rgb(225, 235, 255);
-  font-size: 13px;
+  gap: 6px;
+}
 
-  > button {
-    background: transparent;
-    padding: 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    border: 0 solid;
+// Round mother-of-pearl keys, after the bandoneón's buttons.
+.pearl {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  line-height: 1;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 8px;
+  border-radius: 17px;
+  border: 1px solid rgba(37, 48, 90, 0.25);
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f1efe9 55%, #dcd8cf 100%);
+  font-family: var(--font-sheet);
+  font-size: var(--step--1);
+  font-weight: 600;
+  cursor: pointer;
 
-    &:hover {
-      background-color: aliceblue;
-    }
+  &:hover {
+    border-color: var(--tinta);
+  }
+
+  &:active {
+    background: radial-gradient(circle at 50% 60%, #ffffff 0%, #e6e2d9 100%);
+  }
+
+  // The key you're already in.
+  &[aria-pressed="true"] {
+    background: var(--tinta);
+    border-color: var(--tinta);
+    color: var(--papel);
+    cursor: default;
   }
 }
 
-.key {
-  font-size: 13px;
-  padding: 8px;
-  display: block;
-  border-radius: 4px;
-  min-width: 24px;
-  text-align: center;
+.word {
+  font-family: var(--font-text);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--step-0);
 }
 
-.edit {
-  padding: 8px;
-  color: #0b518a;
-  text-decoration: none;
-  font-weight: 500;
+.easiest {
+  padding-right: 18px;
+}
+
+.star {
+  position: absolute;
+  top: 3px;
+  right: 6px;
+  font-size: 10px;
+  color: var(--oro);
+}
+
+.key {
+  min-width: 2.6em;
+  text-align: center;
+  font-family: var(--font-sheet);
+  font-size: var(--step-2);
+  font-weight: 600;
+  color: var(--carmin);
+}
+
+.textButton {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+
+  &:hover {
+    color: var(--carmin);
+  }
 }
