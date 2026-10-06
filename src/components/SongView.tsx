@@ -47,7 +47,13 @@ function sentenceCase(text: string) {
 
 function Chord({ chord }: { chord: string }) {
   return chord.trim() ? (
-    <span className={styles.chord} data-chord={chord.trim()}>
+    <span
+      className={styles.chord}
+      data-chord={chord.trim()}
+      tabIndex={0}
+      role="button"
+      aria-label={`${chord.trim()}, show chord diagram`}
+    >
       {chord}
     </span>
   ) : (

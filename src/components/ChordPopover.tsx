@@ -1,7 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { loadChordDb, lookupChord, type ChordDb } from "../chords/diagrams";
+import { loadChordDb, lookupChord, type ChordDb, type Position } from "../chords/diagrams";
 import ChordDiagram from "./ChordDiagram";
 import styles from "./ChordPopover.module.scss";
+
+// Screen-reader text, low E to high e: "x 3 2 0 1 0".
+const describe = (name: string, p: Position) =>
+  `${name}: frets ${p.frets.map((f) => (f < 0 ? "x" : f === 0 ? "0" : f + p.baseFret - 1)).join(" ")}, low to high`;
 
 interface Props {
   name: string;
@@ -47,6 +51,7 @@ export default function ChordPopover({ name, anchor, onPointerEnter, onPointerLe
       style={pos}
       role="dialog"
       aria-label={`${name} chord diagram`}
+      tabIndex={-1}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
     >
@@ -65,7 +70,7 @@ export default function ChordPopover({ name, anchor, onPointerEnter, onPointerLe
         )}
       </div>
       {position ? (
-        <ChordDiagram position={position} />
+        <ChordDiagram position={position} label={describe(name, position)} />
       ) : (
         <p className={styles.note}>{failed ? "Couldn't load chord shapes." : db ? "No diagram for this chord." : "Loading…"}</p>
       )}

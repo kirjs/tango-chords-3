@@ -32,8 +32,14 @@
   cursor: pointer;
   border-radius: 3px;
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     background: rgba(190, 30, 45, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--carmin);
+    outline-offset: 1px;
   }
 }
 
