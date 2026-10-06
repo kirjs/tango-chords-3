@@ -10,7 +10,17 @@
   line-height: 1.3;
 }
 
+// Sized to its content so its right padding extends the scroll: room for the
+// floating button rail once you reach the last column.
+.track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  padding-right: var(--rail-space, 76px);
+}
+
 .columns {
+  flex: none;
   height: 100%;
   column-fill: auto;
   column-gap: 28px;
@@ -94,6 +104,10 @@
 }
 
 @media (max-width: 640px) {
+  .track {
+    --rail-space: 56px;
+  }
+
   .song {
     padding: 14px 10px 12px;
     font-size: 0.9375rem;
