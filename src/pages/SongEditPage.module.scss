@@ -1,0 +1,73 @@
+.songEdit {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-weight: 500;
+    color: #475569;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  textarea {
+    font-family: monospace;
+    resize: vertical;
+  }
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.grow {
+  flex: 1;
+  min-width: 200px;
+}
+
+.error {
+  background: #fdecea;
+  color: #b71c1c;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+
+  button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .primary {
+    background: #4285f4;
+    border-color: #4285f4;
+    color: white;
+  }
+}

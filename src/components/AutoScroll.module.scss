@@ -1,0 +1,59 @@
+.autoScroll {
+  display: flex;
+  align-items: center;
+
+  button {
+    background: transparent;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 5px;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.speed {
+  margin: 0 10px;
+  min-width: 30px;
+  text-align: center;
+  display: inline-block;
+}
+
+.length {
+  width: 40px;
+}
+
+.indicator {
+  position: fixed;
+  left: 10px;
+  width: 25px;
+  height: 25px;
+  background-color: rgba(200, 200, 200, 0.5);
+  border-radius: 50%;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.innerDot {
+  width: 11px;
+  height: 11px;
+  background-color: #999;
+  border-radius: 50%;
+}
+
+.scrollLine {
+  position: fixed;
+  left: 10px;
+  top: 60px;
+  width: 2px;
+  height: calc(100vh - 60px);
+  background-color: #ddd;
+}

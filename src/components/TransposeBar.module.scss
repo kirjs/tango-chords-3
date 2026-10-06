@@ -1,0 +1,42 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.panel {
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  background: rgb(225, 235, 255);
+  font-size: 13px;
+
+  > button {
+    background: transparent;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 0 solid;
+
+    &:hover {
+      background-color: aliceblue;
+    }
+  }
+}
+
+.key {
+  font-size: 13px;
+  padding: 8px;
+  display: block;
+  border-radius: 4px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.edit {
+  padding: 8px;
+  color: #0b518a;
+  text-decoration: none;
+  font-weight: 500;
+}

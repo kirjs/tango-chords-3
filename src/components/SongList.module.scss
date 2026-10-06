@@ -1,0 +1,36 @@
+.songList {
+  margin: 20px;
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  th {
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: #475569;
+  }
+
+  tr:hover {
+    background-color: #f1f5f9;
+  }
+
+  a {
+    color: #0b518a;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
