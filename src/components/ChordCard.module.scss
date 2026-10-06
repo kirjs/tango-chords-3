@@ -1,0 +1,90 @@
+.card {
+  width: max-content;
+  padding: 8px 12px 10px;
+  background: var(--papel);
+  border: 1px solid var(--tinta);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(37, 48, 90, 0.2);
+  color: var(--tinta);
+  font-family: var(--font-sheet);
+  white-space: normal;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 2px;
+}
+
+.name {
+  color: var(--carmin);
+  font-weight: 600;
+  font-size: var(--step-1);
+}
+
+.pin {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-right: auto;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--tinta-suave);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--tinta);
+    background: var(--papel-hondo);
+  }
+
+  &[aria-pressed="true"] {
+    color: var(--papel);
+    background: var(--tinta);
+  }
+}
+
+.voicings {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--tinta-suave);
+  font-size: 0.75rem;
+
+  button {
+    padding: 0 5px;
+    border: none;
+    background: none;
+    color: var(--tinta);
+    font-size: var(--step-1);
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--carmin);
+    }
+  }
+}
+
+.note {
+  margin: 4px 0 0;
+  color: var(--tinta-suave);
+  font-family: var(--font-text);
+  font-style: italic;
+  font-size: var(--step--1);
+}
+
+.retry {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--tinta);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}

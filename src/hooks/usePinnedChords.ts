@@ -41,7 +41,15 @@ export function usePinnedChords(shift: number) {
     [toWritten],
   );
 
-  return { pinned, isPinned, togglePin };
+  const setVoicing = useCallback(
+    (shown: string, voicing: number) => {
+      const written = toWritten(shown);
+      setPins((ps) => ps.map((p) => (p.written === written ? { ...p, voicing } : p)));
+    },
+    [toWritten],
+  );
+
+  return { pinned, isPinned, togglePin, setVoicing };
 }
 
 export type PinnedChords = ReturnType<typeof usePinnedChords>;

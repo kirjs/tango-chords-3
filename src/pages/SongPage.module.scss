@@ -14,14 +14,14 @@
   --rail-space: 76px;
 
   &.withPins {
-    --rail-space: 128px;
+    --rail-space: 200px;
   }
 
   @media (max-width: 640px) {
     --rail-space: 56px;
 
     &.withPins {
-      --rail-space: 112px;
+      --rail-space: 136px;
     }
   }
 }

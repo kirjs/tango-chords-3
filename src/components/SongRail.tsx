@@ -6,7 +6,7 @@ import type { TransposeState } from "../hooks/useTranspose";
 import type { Song } from "../types";
 import type { PinnedChords } from "../hooks/usePinnedChords";
 import KeyPicker from "./KeyPicker";
-import PinnedChordCard from "./PinnedChordCard";
+import ChordCard from "./ChordCard";
 import SelectSong from "./SelectSong";
 import styles from "./SongRail.module.scss";
 
@@ -71,7 +71,17 @@ export default function SongRail({ song, transpose, pins }: Props) {
       {pins.pinned.length > 0 && (
         <div className={styles.pinnedList} aria-label="Pinned chords">
           {pins.pinned.map((chord) => (
-            <PinnedChordCard key={chord.name} chord={chord} onUnpin={() => pins.togglePin(chord.name)} />
+            <ChordCard
+              key={chord.name}
+              className={styles.pinnedCard}
+              role="group"
+              aria-label={`Pinned ${chord.name}`}
+              name={chord.name}
+              voicing={chord.voicing}
+              onVoicingChange={(v) => pins.setVoicing(chord.name, v)}
+              isPinned
+              onTogglePin={() => pins.togglePin(chord.name)}
+            />
           ))}
         </div>
       )}
