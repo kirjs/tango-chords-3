@@ -34,9 +34,12 @@
 // Same round pearl as the rail's buttons, sitting on the title's first line.
 .home {
   @include pearl.pearl;
+  box-sizing: border-box;
   width: 32px;
   height: 32px;
-  margin-top: 10px;
+  // Centred on the lettering of the title's first line (48px line box; the
+  // italic capitals sit a little above its middle).
+  margin-top: 5px;
 }
 
 .title {
