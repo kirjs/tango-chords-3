@@ -19,9 +19,9 @@
 
 .logo {
   display: block;
-  width: 60px;
-  height: 43px;
-  border-radius: 6px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
   transition: transform 120ms ease-out;
 
   img {
@@ -123,8 +123,8 @@
 
   .logo,
   .logo img {
-    width: 46px;
-    height: 33px;
+    width: 44px;
+    height: 44px;
   }
 
   .keyGrid {

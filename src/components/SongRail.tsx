@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "../assets/bandoneon.svg";
+import logo from "../assets/logo.png";
 import { useAuth } from "../context/AuthContext";
 import type { TransposeState } from "../hooks/useTranspose";
 import type { Song } from "../types";
@@ -18,7 +18,7 @@ export default function SongRail({ song, transpose }: Props) {
   return (
     <nav className={styles.rail} aria-label="Song controls">
       <Link to="/" className={styles.logo} aria-label="All songs" title="All songs">
-        <img src={logo} alt="" width={60} height={43} />
+        <img src={logo} alt="" width={52} height={52} />
       </Link>
 
       <KeyPicker transpose={transpose} />
