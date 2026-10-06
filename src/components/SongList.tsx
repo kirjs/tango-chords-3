@@ -1,6 +1,11 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState, type MouseEvent } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useSongs } from "../context/SongsContext";
+import { songsService } from "../services/songs";
 import type { Song } from "../types";
+import ConfirmDelete from "./ConfirmDelete";
+import SongContextMenu from "./SongContextMenu";
 import styles from "./SongList.module.scss";
 
 interface LetterGroup {
@@ -23,6 +28,25 @@ function groupByLetter(songs: Song[]): LetterGroup[] {
 
 export default function SongList({ songs }: { songs: Song[] }) {
   const groups = useMemo(() => groupByLetter(songs), [songs]);
+  const { user } = useAuth();
+  const { reload } = useSongs();
+  const [menu, setMenu] = useState<{ song: Song; x: number; y: number } | null>(null);
+  const [toDelete, setToDelete] = useState<Song | null>(null);
+  const closeMenu = useCallback(() => setMenu(null), []);
+
+  // Signed-out visitors can't edit or delete, so they keep the browser's menu.
+  const openMenu = (song: Song) => (e: MouseEvent) => {
+    if (!user) return;
+    e.preventDefault();
+    // Keyboard-triggered menus report 0,0; anchor to the entry instead.
+    const rect = e.currentTarget.getBoundingClientRect();
+    const fromKeyboard = e.clientX === 0 && e.clientY === 0;
+    setMenu({
+      song,
+      x: fromKeyboard ? rect.left : e.clientX,
+      y: fromKeyboard ? rect.bottom : e.clientY,
+    });
+  };
 
   return (
     <div className={styles.index}>
@@ -33,7 +57,7 @@ export default function SongList({ songs }: { songs: Song[] }) {
           </h2>
           <ul>
             {songs.map((song) => (
-              <li key={song.id}>
+              <li key={song.id} onContextMenu={openMenu(song)}>
                 <Link to={`/songs/${song.id}`} className={styles.entry}>
                   <span className={styles.title}>{song.data.title}</span>
                   <span className={styles.leader} aria-hidden />
@@ -45,6 +69,20 @@ export default function SongList({ songs }: { songs: Song[] }) {
           </ul>
         </section>
       ))}
+      {menu && (
+        <SongContextMenu {...menu} onDelete={setToDelete} onClose={closeMenu} />
+      )}
+      {toDelete && (
+        <ConfirmDelete
+          song={toDelete}
+          onCancel={() => setToDelete(null)}
+          onConfirm={async () => {
+            await songsService.deleteSong(toDelete.id);
+            setToDelete(null);
+            await reload();
+          }}
+        />
+      )}
     </div>
   );
 }

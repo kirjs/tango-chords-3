@@ -1,0 +1,36 @@
+.menu {
+  position: fixed;
+  z-index: 50;
+  min-width: 160px;
+  padding: 4px 0;
+  background: var(--papel);
+  border: 1px solid var(--tinta);
+  border-radius: 4px;
+  box-shadow: 0 6px 20px rgba(37, 48, 90, 0.18);
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 6px 16px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      outline: none;
+      background: var(--papel-hondo);
+    }
+  }
+
+  hr {
+    margin: 4px 0;
+    border: none;
+    border-top: 1px solid rgba(37, 48, 90, 0.15);
+  }
+}
+
+.danger {
+  color: var(--carmin);
+}

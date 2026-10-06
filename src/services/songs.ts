@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -46,6 +47,10 @@ export const songsService = {
   async getSong(id: string): Promise<Song | null> {
     const snapshot = await getDoc(doc(songsCollection, id));
     return snapshot.exists() ? toSong(snapshot.id, snapshot.data()) : null;
+  },
+
+  async deleteSong(id: string): Promise<void> {
+    await deleteDoc(doc(songsCollection, id));
   },
 
   async saveSong(data: SongData, body: string, id?: string): Promise<string> {
