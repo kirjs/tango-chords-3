@@ -59,7 +59,8 @@
   position: absolute;
   z-index: 100;
   top: calc(100% + 4px);
-  width: 340px;
+  left: 0;
+  right: 0;
   max-height: min(420px, 70vh);
   overflow-y: auto;
   background: var(--papel);
@@ -159,10 +160,6 @@
   .searchInput {
     width: 100%;
     padding-right: 12px;
-  }
-
-  .dropdown {
-    width: min(340px, calc(100vw - 24px));
   }
 
   // Song controls wrap onto their own row below wordmark, search and sign-in.

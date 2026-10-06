@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import HeaderBar from "../components/HeaderBar";
 import SongView from "../components/SongView";
-import TransposeBar from "../components/TransposeBar";
+import SongRail from "../components/SongRail";
 import { useTranspose } from "../hooks/useTranspose";
 import type { Song } from "../types";
 import { useSong } from "./useSong";
@@ -37,9 +37,6 @@ function LoadedSong({ song }: { song: Song }) {
 
   return (
     <div className={styles.page}>
-      <HeaderBar>
-        <TransposeBar song={song} transpose={transpose} scrollRef={scrollRef} />
-      </HeaderBar>
       <div className={styles.songArea}>
         <SongView
           lines={transpose.transposedSong}
@@ -48,6 +45,7 @@ function LoadedSong({ song }: { song: Song }) {
           heading={<SongHeading song={song} />}
         />
       </div>
+      <SongRail song={song} transpose={transpose} />
     </div>
   );
 }

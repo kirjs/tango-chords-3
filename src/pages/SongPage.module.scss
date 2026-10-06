@@ -1,15 +1,14 @@
-// Exactly one screen tall: the header, then the song filling the rest.
+// Exactly one screen: the song, with a slim button rail on the right.
 .page {
   height: 100vh;
   height: 100dvh;
   display: flex;
-  flex-direction: column;
   overflow: hidden;
 }
 
 .songArea {
   flex: 1;
-  min-height: 0;
+  min-width: 0;
   position: relative;
 }
 
