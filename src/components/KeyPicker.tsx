@@ -18,6 +18,25 @@ export default function KeyPicker({ transpose }: { transpose: TransposeState }) 
   const [isOpen, setIsOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
+  // Cmd/Ctrl+J toggles the popup from anywhere on the song page.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "j") {
+        e.preventDefault();
+        setIsOpen((open) => !open);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  // Focus the current key so Tab/Enter work straight away.
+  useEffect(() => {
+    if (isOpen) {
+      rootRef.current?.querySelector<HTMLButtonElement>('[role="group"] [aria-pressed="true"]')?.focus();
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -44,7 +63,7 @@ export default function KeyPicker({ transpose }: { transpose: TransposeState }) 
         aria-haspopup="true"
         aria-expanded={isOpen}
         aria-label={`Key: ${currentLabel}. Change key`}
-        title="Change key"
+        title={`Change key (${navigator.platform.includes("Mac") ? "⌘J" : "Ctrl J"})`}
       >
         {currentLabel}
       </button>
