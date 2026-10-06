@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { useAuth } from "./context/AuthContext";
 import HomePage from "./pages/HomePage";
 import SongEditPage from "./pages/SongEditPage";
@@ -14,13 +15,31 @@ function RequireAuth({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation();
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/songs/new" element={<RequireAuth><SongEditPage /></RequireAuth>} />
-      <Route path="/songs/:id" element={<SongPage />} />
-      <Route path="/songs/:id/edit" element={<RequireAuth><SongEditPage /></RequireAuth>} />
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    // Keyed by path so navigating away clears an error.
+    <ErrorBoundary key={location.pathname}>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/songs/new"
+          element={
+            <RequireAuth>
+              <SongEditPage />
+            </RequireAuth>
+          }
+        />
+        <Route path="/songs/:id" element={<SongPage />} />
+        <Route
+          path="/songs/:id/edit"
+          element={
+            <RequireAuth>
+              <SongEditPage />
+            </RequireAuth>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </ErrorBoundary>
   );
 }

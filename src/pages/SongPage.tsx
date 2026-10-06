@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import HeaderBar from "../components/HeaderBar";
 import SongView from "../components/SongView";
 import SongRail from "../components/SongRail";
+import { useAuth } from "../context/AuthContext";
 import { useTranspose } from "../hooks/useTranspose";
 import type { Song } from "../types";
 import { useSong } from "./useSong";
@@ -26,6 +27,7 @@ function SongHeading({ song }: { song: Song }) {
 
 function LoadedSong({ song }: { song: Song }) {
   const transpose = useTranspose(song);
+  const { user } = useAuth();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,7 +44,17 @@ function LoadedSong({ song }: { song: Song }) {
           lines={transpose.transposedSong}
           displayChord={transpose.displayChord}
           scrollRef={scrollRef}
-          heading={<SongHeading song={song} />}
+          heading={
+            <>
+              <SongHeading song={song} />
+              {!song.body.trim() && (
+                <p className="status">
+                  This song has no lyrics or chords yet.{" "}
+                  {user && <Link to={`/songs/${song.id}/edit`}>Add them</Link>}
+                </p>
+              )}
+            </>
+          }
         />
       </div>
       <SongRail song={song} transpose={transpose} />

@@ -23,7 +23,11 @@ export function useTranspose(song: Song) {
   const [notation, setNotation] = useLocalStorage<Notation>(`notation-${song.slug}`, "A");
   const songKey = song.data.key || undefined;
 
-  const parsedSong = useMemo(() => parseChords({ text: song.body }), [song.body]);
+  // The parser rejects empty text; a song can be saved without a body.
+  const parsedSong = useMemo(
+    () => (song.body.trim() ? parseChords({ text: song.body }) : []),
+    [song.body],
+  );
 
   const key = songKey ? transposeChord(songKey, shift) : undefined;
 

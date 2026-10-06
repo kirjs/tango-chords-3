@@ -14,7 +14,12 @@ import type { Song, SongData } from "../types";
 // songs/{id} = { id, data: SongData, body, userId, createdAt, updatedAt }
 const songsCollection = collection(db, "songs");
 
-function toSong(id: string, raw: DocumentData): Song {
+// A few early documents use an older shape (top-level title/content) and are
+// test copies; like the production app, only documents with `data` count.
+function toSong(id: string, raw: DocumentData): Song | null {
+  if (!raw["data"] || typeof raw["data"] !== "object") {
+    return null;
+  }
   return {
     id,
     slug: id,
@@ -27,7 +32,9 @@ function toSong(id: string, raw: DocumentData): Song {
 export const songsService = {
   async getAllSongs(): Promise<Song[]> {
     const snapshot = await getDocs(songsCollection);
-    return snapshot.docs.map((d) => toSong(d.id, d.data()));
+    return snapshot.docs
+      .map((d) => toSong(d.id, d.data()))
+      .filter((s): s is Song => s !== null);
   },
 
   async getSong(id: string): Promise<Song | null> {
